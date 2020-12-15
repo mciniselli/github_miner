@@ -37,39 +37,39 @@ def main(file_names):
     tot = len(file_names)
     for i, file_name in enumerate(file_names):
         settings.logger.info(f'{file_name} # {str(i + 1)} of {tot}')
-    try:
-        with open(os.path.join(data_path, file_name)) as f:
+        try:
+            with open(os.path.join(data_path, file_name)) as f:
 
-            index_start = get_progress_value(file_name)
-            settings.logger.info("INDEX START: {}".format(index_start))
+                index_start = get_progress_value(file_name)
+                settings.logger.info("INDEX START: {}".format(index_start))
 
-            for i, line in enumerate(f):
+                for i, line in enumerate(f):
 
-                if i <= index_start:
-                    continue
+                    if i <= index_start:
+                        continue
 
-                data = json.loads(line)
+                    data = json.loads(line)
 
-                tot_processed += 1
+                    tot_processed += 1
 
-                settings.logger.info("Processing repo {} {}".format(data["repo"], tot_processed))
+                    settings.logger.info("Processing repo {} {}".format(data["repo"], tot_processed))
 
-                extract_data(Commit(
-                    hash=data['sha'],
-                    repository=data['repo'],
-                    message=data['message'],
-                    author=data['author'],
-                    api_url=data['api'],
-                    created_at=isoparse(data['created_at'])
-                ), i + 1, data['filename'], data['id'], i)
+                    extract_data(Commit(
+                        hash=data['sha'],
+                        repository=data['repo'],
+                        message=data['message'],
+                        author=data['author'],
+                        api_url=data['api'],
+                        created_at=isoparse(data['created_at'])
+                    ), i + 1, data['filename'], data['id'], i)
 
-                # update progress bar
-                update_progress_bar(file_name, i)
+                    # update progress bar
+                    update_progress_bar(file_name, i)
 
-            settings.logger.info(f'total processed commits: {tot_processed}')
-    except Exception as file_error:
-        settings.logger.error(f'file exception: {type(file_error).__name__} {file_error.args}')
-        print(traceback.format_exc())
+                settings.logger.info(f'total processed commits: {tot_processed}')
+        except Exception as file_error:
+            settings.logger.error(f'file exception: {type(file_error).__name__} {file_error.args}')
+            print(traceback.format_exc())
 
     print('+++ DONE +++')
 
